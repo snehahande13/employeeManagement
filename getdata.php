@@ -40,19 +40,11 @@ function CallAPI($method, $url, $data = false)
 $employeeData=CallAPI('GET','http://dummy.restapiexample.com/api/v1/employees',false);
 // $employeeDelete=CallAPI('GET','http://dummy.restapiexample.com/api/v1/delete/1',false);
 
-//  // $data={"name":"sneha","salary":"24999","age":"23"};
-// $data = array("name"=>'sneha', "salary"=>24999, "age"=>43);
 
-// echo json_encode($data);
-
-// $employee=CallAPI('POST','http://dummy.restapiexample.com/api/v1/create',json_encode($data));
-// echo $employee;
-// echo $employeeDelete;
 $empdata=json_decode($employeeData);
-//print_r($empdata);
-//print_r($empdata->data);
-
 ?>
+
+
 <html lang="en">
 <head>
   <title>Bootstrap Example</title>
@@ -66,6 +58,7 @@ $empdata=json_decode($employeeData);
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" />  
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" ></script> -->
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
   <style type="text/css">
     ul.breadcrumb {
   padding: 10px 16px;
@@ -97,16 +90,15 @@ table.dataTable tbody tr {
   text-align: center  !important;
 }
   </style>
-}
+    
+
 </head>
+    
+    
 <?php $base_url= "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>
 
 <body style="background-color: #eee">
- <!--  <ul class="breadcrumb">
-  <li><a href=<?=$base_url?> >Dashboard</a></li>
- 
-  
-</ul> -->
+
 <div class="container">
   <?php if($_SESSION["email"]) {
 ?>
