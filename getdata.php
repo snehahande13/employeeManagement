@@ -40,11 +40,19 @@ function CallAPI($method, $url, $data = false)
 $employeeData=CallAPI('GET','http://dummy.restapiexample.com/api/v1/employees',false);
 // $employeeDelete=CallAPI('GET','http://dummy.restapiexample.com/api/v1/delete/1',false);
 
+//  // $data={"name":"sneha","salary":"24999","age":"23"};
+// $data = array("name"=>'sneha', "salary"=>24999, "age"=>43);
 
+// echo json_encode($data);
+
+// $employee=CallAPI('POST','http://dummy.restapiexample.com/api/v1/create',json_encode($data));
+// echo $employee;
+// echo $employeeDelete;
 $empdata=json_decode($employeeData);
+//print_r($empdata);
+//print_r($empdata->data);
+
 ?>
-
-
 <html lang="en">
 <head>
   <title>Bootstrap Example</title>
@@ -58,7 +66,6 @@ $empdata=json_decode($employeeData);
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" />  
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" ></script> -->
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    
   <style type="text/css">
     ul.breadcrumb {
   padding: 10px 16px;
@@ -83,22 +90,24 @@ ul.breadcrumb li a:hover {
   text-decoration: underline;
 }
 
-table.dataTable tbody tr {
+/*table.dataTable tbody tr {
     background-color: #ffffff;
-}
+}*/
+
 .headertext{
   text-align: center  !important;
 }
   </style>
-    
-
+}
 </head>
-    
-    
 <?php $base_url= "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>
 
 <body style="background-color: #eee">
-
+ <!--  <ul class="breadcrumb">
+  <li><a href=<?=$base_url?> >Dashboard</a></li>
+ 
+  
+</ul> -->
 <div class="container">
   <?php if($_SESSION["email"]) {
 ?>
@@ -129,8 +138,9 @@ table.dataTable tbody tr {
       </tr>
     </thead>
     <tbody>
+
      <?php foreach($empdata->data as $emp){?>
-      <tr>
+      <tr id=<?=$emp->id?> >
         <td><?php echo $emp->id; ?></td>
         <td><?php echo $emp->employee_name;?></td>
         <td><?php echo $emp->employee_salary;?></td>
@@ -157,25 +167,25 @@ table.dataTable tbody tr {
       <div class="modal-body">
         <div class="login-form">
 
-        <!-- <form action="" method="post"> -->
+      
        
 
-          <h5 style="color:green" id='message_success'></h5>
+          <h5 style='color: red' id='message_error'></h5>
          
           <div class="form-group">
-            <input type="text" name="employee_name" id="employee_name" class="form-control" placeholder="Enter Name" required="required">
+            <input type="text" name="employee_name" id="employee_name" class="form-control" placeholder="Enter Employee Name" required="required">
           </div>
           <div class="form-group">
-            <input type="text" name="employee_salary" id='employee_salary' class="form-control" placeholder="Enter Salary" required="required">
+            <input type="text" name="employee_salary" id='employee_salary' class="form-control" placeholder="Enter Employee Salary" required="required">
           </div>
           <div class="form-group">
-            <input type="text" name="employee_age" id='employee_age' class="form-control" placeholder="Enter Age" required="required">
+            <input type="text" name="employee_age" id='employee_age' class="form-control" placeholder="Enter Employee Age" required="required">
           </div>
           <div class="form-group">
-            <button type="submit" name='submit' id='adddata' class="btn btn-primary">Add</button>
+            <button type="submit" name='submit' id='adddata'  class="btn btn-primary">Save</button>
           </div>
 
-        <!-- </form> -->
+        
 
       </div>
       </div>
@@ -191,10 +201,17 @@ table.dataTable tbody tr {
 </body>
 </html>
 <script type="text/javascript">
-   $('#datatable').dataTable(  
-    {});  
+ 
+
+  var mytable= $('#datatable').DataTable({
+    "bStateSave": true
+  });  
 
   $('#adddata').click(function(){
+     if (document.getElementById('employee_name').value != '' && 
+    document.getElementById('employee_salary').value != '' &&
+      document.getElementById('employee_age').value != '')
+  {
     var employee_name=$('#employee_name').val();
     var employee_salary=$('#employee_salary').val();
     var employee_age=$('#employee_age').val();
@@ -208,24 +225,45 @@ table.dataTable tbody tr {
               data: data,
               success: function(data) {
                 console.log(data); 
-                console.log(data['message']);
-                $('#message_success').text(data['message']).delay(2000).fadeOut();
+                // console.log(data['message']);
+                
                 // $.session.set('message',data['message']);
                 $(".modal-body input").val("");
+                $("#addemp").modal('hide');
+                // $(".modal").close();
             swal("Record has been added successfully!", {
             icon: "success",
           });
 
-                },
+            var empdata=data['data'];
+            console.log(empdata.name);
+          var node= mytable.row.add([empdata.id,empdata.name, empdata.salary, empdata.age, "<button class='btn btn-danger deleteemp' type='button'  data-id='"+empdata.id+"' data-toggle='tooltip' data-placement='top' title='Delete'><i class='fa fa-trash'></i></button>"]).draw();
+           
+             mytable.page('last').draw();
+             mytable.page('last').draw('page');
+             $('#datatable tbody tr:last').attr('id',empdata.id);
+             
+             var $el = $("#datatable tbody tr:last"),
+                x = 5000,
+                originalColor = $el.css("background");
+
+            $el.css("background", "#bacdeaf5");
+            setTimeout(function(){
+              $el.css("background", originalColor);
+            }, x);
+            
+             }
+                })
+   }
+   else{
+     $('#message_error').text('Please enter the all data').delay(5000).fadeOut();
+
+   }
               // dataType: dataType
             });
-  });
 
-
-$('.deleteemp').click(function(){
+$(document).on('click','.deleteemp',function(){
     var employee_id=$(this).data('id');
-   
-
      console.log(employee_id);
      // swal("Hello world!");
      swal({
@@ -244,17 +282,17 @@ $('.deleteemp').click(function(){
               success: function(data) {
                 console.log(data); 
                 console.log(data['message']);
-                // $('#message_success').text(data['message']).delay(2000).fadeOut();
-                // $.session.set('message',data['message']);
-                // $(".modal-body input").val("");
-
-
-                },
-              // dataType: dataType
-            });
-          swal("Poof! Record has been deleted!", {
+                mytable.row("#"+employee_id).remove().draw(false);
+                if(data['status']=='success'){
+                   swal("Poof! Record has been deleted!", {
             icon: "success",
           });
+                }
+                },
+              
+            });
+         
+
         } else {
           
         }
@@ -262,7 +300,6 @@ $('.deleteemp').click(function(){
     // data={"id":employee_id,"salary":employee_salary,"age":employee_age}
     // console.log(data);
     
-
   });
 
 $(function () {
