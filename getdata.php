@@ -238,7 +238,7 @@ $('.deleteemp').click(function(){
       .then((willDelete) => {
         if (willDelete) {
           $.ajax({
-              type: "GET",
+              type: "DELETE",
               url: "http://dummy.restapiexample.com/api/v1/delete/"+employee_id,
               // data: data,
               success: function(data) {
