@@ -38,19 +38,9 @@ function CallAPI($method, $url, $data = false)
     return $result;
 }
 $employeeData=CallAPI('GET','http://dummy.restapiexample.com/api/v1/employees',false);
-// $employeeDelete=CallAPI('GET','http://dummy.restapiexample.com/api/v1/delete/1',false);
 
-//  // $data={"name":"sneha","salary":"24999","age":"23"};
-// $data = array("name"=>'sneha', "salary"=>24999, "age"=>43);
-
-// echo json_encode($data);
-
-// $employee=CallAPI('POST','http://dummy.restapiexample.com/api/v1/create',json_encode($data));
-// echo $employee;
-// echo $employeeDelete;
 $empdata=json_decode($employeeData);
-//print_r($empdata);
-//print_r($empdata->data);
+
 
 ?>
 <html lang="en">
@@ -100,14 +90,9 @@ ul.breadcrumb li a:hover {
   </style>
 }
 </head>
-<?php $base_url= "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>
 
 <body style="background-color: #eee">
- <!--  <ul class="breadcrumb">
-  <li><a href=<?=$base_url?> >Dashboard</a></li>
- 
-  
-</ul> -->
+
 <div class="container">
   <?php if($_SESSION["email"]) {
 ?>
@@ -256,7 +241,7 @@ ul.breadcrumb li a:hover {
                 })
    }
    else{
-     $('#message_error').text('Please enter the all data').delay(5000).fadeOut();
+     $('#message_error').text('Please fill the all field').delay(5000).fadeOut();
 
    }
               // dataType: dataType
@@ -297,8 +282,7 @@ $(document).on('click','.deleteemp',function(){
           
         }
       });
-    // data={"id":employee_id,"salary":employee_salary,"age":employee_age}
-    // console.log(data);
+    
     
   });
 
